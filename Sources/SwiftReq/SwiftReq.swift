@@ -1,40 +1,79 @@
 import Alamofire
 import Foundation
 
-class SwiftReq {
-    init(baseURL: URL, baseHeaders: [String: String]? = nil) {
-        self.baseURL = baseURL
-        self.baseHeaders = baseHeaders
+public class SwiftReqBuilder {
+    public init(host: URL) {
+        self.host = host
     }
 
-    var baseURL: URL
-    let baseHeaders: [String: String]?
+    private let host: URL
+    private var headers: [String: String] = [:]
+    private var parameters: [String: String] = [:]
+    private var timeout: TimeInterval = 10.0
+    private var requestInterceptor: RequestInterceptor? = nil
 
-    func GET() -> Get {
-        return Get(swiftReq: self)
+    @discardableResult
+    public func setHeaders(_ headers: [String: String]) -> SwiftReqBuilder {
+        self.headers = headers
+        return self
     }
 
+    @discardableResult
+    public func addHeader(key: String, value: String) -> SwiftReqBuilder {
+        self.headers[key] = value
+        return self
+    }
+
+    @discardableResult
+    public func setParameters(_ parameters: [String: String]) -> SwiftReqBuilder {
+        self.parameters = parameters
+        return self
+    }
+
+    @discardableResult
+    public func addParameter(key: String, value: String) -> SwiftReqBuilder {
+        self.parameters[key] = value
+        return self
+    }
+
+    @discardableResult
+    public func setTimeout(_ timeout: TimeInterval) -> SwiftReqBuilder {
+        self.timeout = timeout
+        return self
+    }
+
+    @discardableResult
+    public func setRequestInterceptor(_ requestInterceptor: RequestInterceptor) -> SwiftReqBuilder {
+        self.requestInterceptor = requestInterceptor
+        return self
+    }
+
+    public func build() -> SwiftReq {
+        return SwiftReq(
+            host: host, headers: headers,
+            parameters: parameters, timeout: timeout,
+            requestInterceptor: requestInterceptor
+        )
+    }
 }
 
-class SwiftReqBuilder {
-    var baseURL: URL? = nil
-    var baseHeaders: [String: String]? = nil
-
-    func baseURL(_ url: URL) -> SwiftReqBuilder {
-        self.baseURL = url
-        return self
+public class SwiftReq {
+    internal init(
+        host: URL, headers: [String: String],
+        parameters: [String: String], timeout: TimeInterval,
+        requestInterceptor: RequestInterceptor?
+    ) {
+        self.host = host
+        self.headers = headers
+        self.parameters = parameters
+        self.timeout = timeout
+        self.requestInterceptor = requestInterceptor
     }
 
-    func baseHeaders(_ headers: [String: String]) -> SwiftReqBuilder {
-        self.baseHeaders = headers
-        return self
-    }
-
-    func build() throws -> SwiftReq {
-        guard let baseURL = baseURL else {
-            throw SwiftReqError.swiftReqBuildingError(message: "Base URL is required.")
-        }
-        return SwiftReq(baseURL: baseURL, baseHeaders: baseHeaders)
-    }
+    public let host: URL
+    public let headers: [String: String]
+    public let parameters: [String: String]
+    public let timeout: TimeInterval
+    public let requestInterceptor: RequestInterceptor?
 
 }
