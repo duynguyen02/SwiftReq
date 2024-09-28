@@ -8,42 +8,29 @@ public class SwiftReqBuilder {
 
     private let host: URL
     private var headers: [String: String] = [:]
-    private var parameters: [String: String] = [:]
     private var timeout: TimeInterval = 10.0
     private var requestInterceptor: RequestInterceptor? = nil
 
     @discardableResult
-    public func setHeaders(_ headers: [String: String]) -> SwiftReqBuilder {
+    public func setHeaders(_ headers: [String: String]) -> Self {
         self.headers = headers
         return self
     }
 
     @discardableResult
-    public func addHeader(key: String, value: String) -> SwiftReqBuilder {
+    public func addHeader(key: String, value: String) -> Self {
         self.headers[key] = value
         return self
     }
 
     @discardableResult
-    public func setParameters(_ parameters: [String: String]) -> SwiftReqBuilder {
-        self.parameters = parameters
-        return self
-    }
-
-    @discardableResult
-    public func addParameter(key: String, value: String) -> SwiftReqBuilder {
-        self.parameters[key] = value
-        return self
-    }
-
-    @discardableResult
-    public func setTimeout(_ timeout: TimeInterval) -> SwiftReqBuilder {
+    public func setTimeout(_ timeout: TimeInterval) -> Self {
         self.timeout = timeout
         return self
     }
 
     @discardableResult
-    public func setRequestInterceptor(_ requestInterceptor: RequestInterceptor) -> SwiftReqBuilder {
+    public func setRequestInterceptor(_ requestInterceptor: RequestInterceptor) -> Self {
         self.requestInterceptor = requestInterceptor
         return self
     }
@@ -51,7 +38,7 @@ public class SwiftReqBuilder {
     public func build() -> SwiftReq {
         return SwiftReq(
             host: host, headers: headers,
-            parameters: parameters, timeout: timeout,
+            timeout: timeout,
             requestInterceptor: requestInterceptor
         )
     }
@@ -60,19 +47,17 @@ public class SwiftReqBuilder {
 public class SwiftReq {
     internal init(
         host: URL, headers: [String: String],
-        parameters: [String: String], timeout: TimeInterval,
+        timeout: TimeInterval,
         requestInterceptor: RequestInterceptor?
     ) {
         self.host = host
         self.headers = headers
-        self.parameters = parameters
         self.timeout = timeout
         self.requestInterceptor = requestInterceptor
     }
 
     public let host: URL
     public let headers: [String: String]
-    public let parameters: [String: String]
     public let timeout: TimeInterval
     public let requestInterceptor: RequestInterceptor?
 
