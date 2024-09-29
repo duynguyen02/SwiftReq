@@ -81,7 +81,9 @@ final class ServiceBuilderTests: XCTestCase {
             )
             .addFormField(
                 ("userId", "1".data(using: .utf8, allowLossyConversion: false)!)
-            )
+            ).multipartFormDataModifier{ fd in
+                fd.append("1".data(using: .utf8)!, withName: "st")
+            }
 
         postRequest.build().cURLDescription { desc in
             print(desc)
