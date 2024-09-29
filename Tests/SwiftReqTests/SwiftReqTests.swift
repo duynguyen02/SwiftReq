@@ -32,7 +32,7 @@ final class ServiceBuilderTests: XCTestCase {
 
     func testCreateTodoByURLEncodedFormDataService() async throws {
         let endpoint = "/todos"
-        let postRequest: Service<Todo> = post(swiftReq: swiftReq, endpoint: endpoint)
+        let postRequest: Service<TodoCreateResponse> = post(swiftReq: swiftReq, endpoint: endpoint)
             .urlEncodedFormDataService()
             .addParameter((key: "title", value: "foo"))
             .addParameter((key: "body", value: "bar"))
@@ -51,7 +51,7 @@ final class ServiceBuilderTests: XCTestCase {
 
     func testCreateTodoByJSONBodyService() async throws {
         let endpoint = "/todos"
-        let postRequest: Service<Todo> = post(swiftReq: swiftReq, endpoint: endpoint)
+        let postRequest: Service<TodoCreateResponse> = post(swiftReq: swiftReq, endpoint: endpoint)
             .jsonBodyService()
             .setBody(
                 TodoCreate(title: "foo", body: "bar", userId: 1)
@@ -62,6 +62,7 @@ final class ServiceBuilderTests: XCTestCase {
         }
 
         let response = try await postRequest.response()
+        
 
         XCTAssertNotNil(response.body)
         XCTAssertEqual(response.body?.title, "foo")
@@ -70,7 +71,7 @@ final class ServiceBuilderTests: XCTestCase {
 
     func testCreateTodoByMultipartFormDataService() async throws {
         let endpoint = "/todos"
-        let postRequest: Service<Todo> = post(swiftReq: swiftReq, endpoint: endpoint)
+        let postRequest: Service<TodoCreateMultipartResponse> = post(swiftReq: swiftReq, endpoint: endpoint)
             .multipartFormDataService()
             .addFormField(
                 ("title", "foo".data(using: .utf8, allowLossyConversion: false)!)
@@ -89,7 +90,7 @@ final class ServiceBuilderTests: XCTestCase {
         let response = try await postRequest.response()
 
         XCTAssertNotNil(response.body)
-        XCTAssertEqual(response.body?.title, "foo")
+        XCTAssertEqual(response.body?.id, 201)
         XCTAssert(response.isSuccessful == true)
     }
 
@@ -138,4 +139,15 @@ struct TodoCreate: Encodable {
     let title: String
     let body: String
     let userId: Int
+}
+
+struct TodoCreateResponse: Decodable{
+    let title: String
+    let body: String
+    let userId: Int
+    let id: Int
+}
+
+struct TodoCreateMultipartResponse: Decodable{
+    let id: Int
 }
