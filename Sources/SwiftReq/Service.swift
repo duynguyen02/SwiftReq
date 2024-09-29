@@ -102,6 +102,11 @@ public class Service<T: Decodable> {
     }
 
     @available(macOS 10.15, *)
+    public func publisher() -> DataResponsePublisher<T>{
+        return build().publishDecodable(type: T.self)
+    }
+
+    @available(macOS 10.15, *)
     public func request() async throws -> T {
         return try await build().serializingDecodable(T.self).value
     }
