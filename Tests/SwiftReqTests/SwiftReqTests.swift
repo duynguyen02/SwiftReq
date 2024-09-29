@@ -3,6 +3,20 @@ import XCTest
 
 @testable import SwiftReq
 
+class TestInterceptor: RequestInterceptor{
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        print("do something...")
+        completion(.success(urlRequest))
+    }
+    func adapt(_ urlRequest: URLRequest, using state: RequestAdapterState, completion: @escaping (Result<URLRequest, any Error>) -> Void) {
+        print("another do something...")
+        completion(.success(urlRequest))
+    }
+    func retry(_ request: Request, for session: Session, dueTo error: any Error, completion: @escaping (RetryResult) -> Void) {
+        completion(.retry)
+    }
+}
+
 final class ServiceBuilderTests: XCTestCase {
 
     let host = URL(string: "https://jsonplaceholder.typicode.com")!
@@ -10,7 +24,9 @@ final class ServiceBuilderTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        swiftReq = SwiftReqBuilder(host: host).build()
+        swiftReq = SwiftReqBuilder(host: host)
+            .setRequestInterceptor(TestInterceptor())
+            .build()
     }
 
     func testGetTodo() async throws {
