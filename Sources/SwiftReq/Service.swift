@@ -178,12 +178,21 @@ public class URLEncodedFormDataService<T: Decodable>: Service<T> {
 public class MultipartFormDataService<T: Decodable>: Service<T> {
 
     fileprivate var formFields: FormFields = [:]
+    fileprivate var multipartFormDataModifier: ((MultipartFormData) -> Void)? = nil
 
     @discardableResult
     public func setFormFields(_ formFields: FormFields) -> Self {
         self.formFields = formFields
         return self
     }
+
+
+    @discardableResult
+    public func multipartFormDataModifier(_ modifier: @escaping ((MultipartFormData) -> Void)) -> Self{
+        self.multipartFormDataModifier = multipartFormDataModifier
+        return self
+    }
+
 
     @discardableResult
     public func addFormField(_ formField: (String, Data)) -> Self {
@@ -198,6 +207,7 @@ public class MultipartFormDataService<T: Decodable>: Service<T> {
         return Alamofire.AF.upload(
             multipartFormData: { fd in
                 self.formFields.forEach { fd.append($1, withName: $0) }
+                self.multipartFormDataModifier?(fd)
             }, to: url,
             method: method,
             headers: HTTPHeaders(headers),
