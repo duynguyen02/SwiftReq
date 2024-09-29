@@ -101,10 +101,12 @@ public class Service<T: Decodable> {
 
     }
 
+    @available(macOS 10.15, *)
     public func request() async throws -> T {
         return try await build().serializingDecodable(T.self).value
     }
 
+    @available(macOS 10.15, *)
     public func response() async throws -> Response<T> {
         let response: DataResponse<T, AFError> = await build().serializingDecodable(T.self).response
 
@@ -227,7 +229,7 @@ public class JSONBodyService<T: Decodable, E: Encodable>: Service<T> {
         let url: URL = getURLWithEndpointAndQueries()
         let headers: Headers = getAllHeaders()
         
-        guard let body = self.body else {
+        guard let body: E = self.body else {
             fatalError("Body must be set before calling build().")
         }
 
