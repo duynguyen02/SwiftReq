@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name             = 'SwiftReq'
-    s.version          = '1.0.0'
+    s.version          = '1.1.0'
     s.summary          = 'The Swift library makes it easier to perform network requests with RESTful APIs.'
     s.homepage         = 'https://github.com/duynguyen02/SwiftReq'
     s.license          = { :type => 'MIT', :file => 'LICENSE' }

@@ -103,17 +103,17 @@ public class Service<T: Decodable> {
 
     @available(macOS 10.15, *)
     public func publisher() -> DataResponsePublisher<T>{
-        return build().publishDecodable(type: T.self)
+        return build().publishDecodable(type: T.self, decoder: swiftReq.dataDecoder)
     }
 
     @available(macOS 10.15, *)
     public func request() async throws -> T {
-        return try await build().serializingDecodable(T.self).value
+        return try await build().serializingDecodable(T.self, decoder: swiftReq.dataDecoder).value
     }
 
     @available(macOS 10.15, *)
     public func response() async throws -> Response<T> {
-        let response: DataResponse<T, AFError> = await build().serializingDecodable(T.self).response
+        let response: DataResponse<T, AFError> = await build().serializingDecodable(T.self, decoder: swiftReq.dataDecoder).response
 
         var isSuccessful: Bool = false
         if let statusCode: Int = response.response?.statusCode {
