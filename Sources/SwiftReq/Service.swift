@@ -1,22 +1,6 @@
 import Alamofire
 import Foundation
 
-public class Response<T: Decodable> {
-    internal init(
-        isSuccessful: Bool? = nil, statusCode: Int? = nil, body: T? = nil, error: String? = nil
-    ) {
-        self.isSuccessful = isSuccessful
-        self.statusCode = statusCode
-        self.body = body
-        self.error = error
-    }
-
-    let isSuccessful: Bool?
-    let statusCode: Int?
-    let body: T?
-    let error: String?
-}
-
 public class Service<T: Decodable> {
     public init(swiftReq: SwiftReq, endpoint: Endpoint) {
         self.swiftReq = swiftReq
